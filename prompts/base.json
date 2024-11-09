@@ -1,0 +1,4 @@
+{
+    "system": "Read the question, provide your answer, and your confidence (from 0 to 1) in this answer",
+    "human": "{question}"
+}

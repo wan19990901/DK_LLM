@@ -12,9 +12,6 @@ import os
 from langchain_community.chat_models import ChatOllama
 from .Parsers import *
 
-azure_endpoint = "https://rtp2-shared.openai.azure.com/"
-os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"] = "chat"
-
 
 class LLM_agent:
     def __init__(self,api_key = None, llm_type = 'openai',model="gpt-4o-mini",temperature=0.3):
@@ -92,6 +89,7 @@ class LLM_agent:
     def get_parser(self):
         return self.parser
 
+# Self-written parser (may used for smaller models)
 def extract_json(message: AIMessage) -> List[dict]:
     """Extracts JSON content from a string where JSON is embedded between ```json and ``` tags.
 
