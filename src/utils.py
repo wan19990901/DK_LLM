@@ -1,32 +1,19 @@
 import time
 import numpy as np
-from sklearn.feature_extraction.text import CountVectorizer,TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
-from nltk.metrics.distance import jaccard_distance
-from nltk.util import ngrams
-from nltk.tokenize import word_tokenize
-import Levenshtein
-from transformers import AutoTokenizer, AutoModel
-import torch
-from scipy.spatial.distance import cosine
 # Function to load GloVe vectors
-import torch.nn.functional as F
 import json
 import re
 from copy import deepcopy
 import os
 import pandas as pd
 from collections import Counter
-import statsmodels.api as sm
-from sklearn.metrics import roc_auc_score,roc_curve,f1_score
-from sklearn.linear_model import LogisticRegression
-from adaptive_consistency import AC, BetaStoppingCriteria
 
 
-NUM_OF_SAMPLES = 500
-NUM_OF_COT = 40
-
-# Continue with the rest of yo
+def format_response(response):
+    """Format Claude's response into a dictionary"""
+    # Extract the content string and parse it as JSON
+    content = response.content
+    return json.loads(content)
 
 
 
@@ -52,10 +39,6 @@ def check_correctness_MC(correct_answer,cot_answers,question):
             correctness_list.append(0)
 
     return correctness_list
-
-def read_jsonl(path: str):
-    with open(path, "r", encoding='utf-8') as fh:
-        return [json.loads(line) for line in fh.readlines() if line]
 
 def extract_nums(s):
     s = s.replace(",", "")
