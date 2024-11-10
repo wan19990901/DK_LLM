@@ -11,9 +11,9 @@ from datetime import datetime
 DATA_DIR = '../data/'
 
 # Experiment Config
-DF_NAME = 'GSM8K'
-NUM_OF_SAMPLES = 2
-NUM_OF_REPEAT = 2
+DF_NAME = 'MMLU'
+NUM_OF_SAMPLES = 10
+NUM_OF_REPEAT = 5
 
 def get_llm_config(args) -> Dict[str, Any]:
     """Get LLM configuration from arguments"""
@@ -22,7 +22,7 @@ def get_llm_config(args) -> Dict[str, Any]:
         'api_key_link': args.api_key_file,
         'model': args.model,
         'prompt_link': args.prompt_file,
-        'parser_template': Base_Parser,
+        'parser_template': Base_Parser, # We need to make this more flexible
         'temperature': args.temperature,    
     }
 
@@ -32,9 +32,10 @@ def save_json(results: Dict[str, Any], llm_config: Dict[str, Any]) -> None:
     if not os.path.exists(storage_dir):
         os.makedirs(storage_dir)
     
-    # Create filename with timestamp
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    file_path = os.path.join(storage_dir, f'{DF_NAME}_{timestamp}.json')
+    # Create filename using model, dataset name, and prompt file name
+    prompt_name = os.path.splitext(os.path.basename(llm_config['prompt_link']))[0]  # Get prompt name without extension
+    file_name = f'{DF_NAME}_{prompt_name}.json'
+    file_path = os.path.join(storage_dir, file_name)
     
     # Add metadata
     results['metadata'] = {
@@ -101,6 +102,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
             while not success and parse_attempts < MAX_PARSE_ATTEMPTS:
                 try:
                     response = cot_agent.invoke(arguments_dict)
+                    print(1)
                     # Try to update result entry to verify response format
                     result_entry = base_result.copy()
                     result_entry.update({
@@ -125,24 +127,23 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                 })
             
             results_dict['results'].append(result_entry)
-            
-            results_dict['results'].append(result_entry)
 
-        # Save intermediate results after each question
+        # Save results after completing all repeats for the current question
+        print(f"\nSaving results after completing question {row_idx}")
         save_json(results_dict, llm_config)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run GSM8K evaluation')
-    parser.add_argument('--llm_type', default='openai', 
+    parser.add_argument('--llm_type', default='anthropic', 
                        choices=['openai', 'ollama', 'anthropic', 'gemini', 'azure'], 
                        help='LLM type')
-    parser.add_argument('--api_key_file', default='../Api_keys/openai_api.txt', 
+    parser.add_argument('--api_key_file', default='../Api_keys/claude_api.txt', 
                        help='API key file')
-    parser.add_argument('--model', default='gpt-3.5-turbo-0125', 
+    parser.add_argument('--model', default='claude-3-5-haiku-20241022', 
                        help='Model name')
     parser.add_argument('--prompt_file', default='../prompts/base.json', 
                        help='Prompt template file')
-    parser.add_argument('--temperature', type=float, default=0, 
+    parser.add_argument('--temperature', type=float, default=0.1, 
                        help='Temperature for LLM')
     parser.add_argument('--start_index', type=int, default=0, 
                        help='Starting index for processing')

@@ -9,11 +9,27 @@ import pandas as pd
 from collections import Counter
 
 
+def clean_json_string(json_string):
+    """Extract the JSON dictionary from the response string"""
+    # Try to find the last occurrence of a dictionary-like pattern
+    pattern = r'(\{[^{]*"Answer"[^}]*"Confidence"[^}]*\}|\{[^{]*"Confidence"[^}]*"Answer"[^}]*\})'
+    matches = re.findall(pattern, json_string)
+    
+    if matches:
+        # Take the last match as it's typically the final answer
+        json_dict_str = matches[-1]
+        return json_dict_str.strip()
+    else:
+        raise ValueError("No JSON dictionary found in response")
+
 def format_response(response):
-    """Format Claude's response into a dictionary"""
-    # Extract the content string and parse it as JSON
-    content = response.content
-    return json.loads(content)
+    """Format response into a dictionary"""
+    try:
+        json_dict_str = clean_json_string(response.content)
+        return json.loads(json_dict_str)
+    except json.JSONDecodeError as e:
+        print(f"Failed to parse response: {response.content}")
+        raise ValueError("Could not parse response into expected format")
 
 
 

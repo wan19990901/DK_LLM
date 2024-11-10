@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "prompt_file": "base.json",
+    "num_samples": 10,
+    "llm_type": "openai",
+    "temperature": 0.0
+  },
+  "results": [
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gpt-4o-mini",
+      "repeat_number": 0,
+      "answer": "4",
+      "confidence": "1"
+    },
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gpt-4o-mini",
+      "repeat_number": 1,
+      "answer": "4",
+      "confidence": "1"
+    },
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gpt-4o-mini",
+      "repeat_number": 2,
+      "answer": "4",
+      "confidence": "1"
+    },
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gpt-4o-mini",
+      "repeat_number": 3,
+      "answer": "4",
+      "confidence": "1"
+    },
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gpt-4o-mini",
+      "repeat_number": 4,
+      "answer": "4",
+      "confidence": "1"
+    }
+  ]
+}

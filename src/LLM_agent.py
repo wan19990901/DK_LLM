@@ -59,6 +59,7 @@ class LLM_agent:
 
         chain = self.chat_prompt | self.llm
         response = chain.invoke(arg_dict)
+        # print(response)
         # Format response based on LLM type
         formatted_response = format_response(response)
         return formatted_response
