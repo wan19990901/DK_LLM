@@ -1,0 +1,175 @@
+{
+  "metadata": {
+    "prompt_file": "base.json",
+    "num_samples": 10,
+    "llm_type": "gemini",
+    "temperature": 0.0
+  },
+  "results": [
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 0,
+      "answer": "D) 6",
+      "confidence": "1.0"
+    },
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 1,
+      "answer": "D) 6",
+      "confidence": "1.0"
+    },
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 2,
+      "answer": "D) 6",
+      "confidence": "1.0"
+    },
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 3,
+      "answer": "D) 6",
+      "confidence": "1.0"
+    },
+    {
+      "question_id": 0,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q. The options are: A) 0, B) 4, C) 2, D) 6",
+      "correct_answer": "B",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 4,
+      "answer": "D) 6",
+      "confidence": "1.0"
+    },
+    {
+      "question_id": 1,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Let p = (1, 2, 5, 4)(2, 3) in S_5 . Find the index of <p> in S_5. The options are: A) 8, B) 2, C) 24, D) 120",
+      "correct_answer": "C",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 0,
+      "answer": "The index of <p> in S_5 is 24. So the answer is C).",
+      "confidence": "1"
+    },
+    {
+      "question_id": 1,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Let p = (1, 2, 5, 4)(2, 3) in S_5 . Find the index of <p> in S_5. The options are: A) 8, B) 2, C) 24, D) 120",
+      "correct_answer": "C",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 1,
+      "answer": "The index of <p> in S_5 is 24. So the answer is C).",
+      "confidence": "1"
+    },
+    {
+      "question_id": 1,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Let p = (1, 2, 5, 4)(2, 3) in S_5 . Find the index of <p> in S_5. The options are: A) 8, B) 2, C) 24, D) 120",
+      "correct_answer": "C",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 2,
+      "answer": "D) 120",
+      "confidence": "1"
+    },
+    {
+      "question_id": 1,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Let p = (1, 2, 5, 4)(2, 3) in S_5 . Find the index of <p> in S_5. The options are: A) 8, B) 2, C) 24, D) 120",
+      "correct_answer": "C",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 3,
+      "answer": "The index of <p> in S_5 is 24. So the answer is C).",
+      "confidence": "1"
+    },
+    {
+      "question_id": 1,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Let p = (1, 2, 5, 4)(2, 3) in S_5 . Find the index of <p> in S_5. The options are: A) 8, B) 2, C) 24, D) 120",
+      "correct_answer": "C",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 4,
+      "answer": "D) 120",
+      "confidence": "1"
+    },
+    {
+      "question_id": 2,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find all zeros in the indicated finite field of the given polynomial with coefficients in that field. x^5 + 3x^3 + x^2 + 2x in Z_5 The options are: A) 0, B) 1, C) 0,1, D) 0,4",
+      "correct_answer": "D",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 0,
+      "answer": "D) 0,4",
+      "confidence": "1"
+    },
+    {
+      "question_id": 2,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find all zeros in the indicated finite field of the given polynomial with coefficients in that field. x^5 + 3x^3 + x^2 + 2x in Z_5 The options are: A) 0, B) 1, C) 0,1, D) 0,4",
+      "correct_answer": "D",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 1,
+      "answer": "D) 0,4",
+      "confidence": "1"
+    },
+    {
+      "question_id": 2,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find all zeros in the indicated finite field of the given polynomial with coefficients in that field. x^5 + 3x^3 + x^2 + 2x in Z_5 The options are: A) 0, B) 1, C) 0,1, D) 0,4",
+      "correct_answer": "D",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 2,
+      "answer": "D) 0,4",
+      "confidence": "1"
+    },
+    {
+      "question_id": 2,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find all zeros in the indicated finite field of the given polynomial with coefficients in that field. x^5 + 3x^3 + x^2 + 2x in Z_5 The options are: A) 0, B) 1, C) 0,1, D) 0,4",
+      "correct_answer": "D",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 3,
+      "answer": "D) 0,4",
+      "confidence": "1"
+    },
+    {
+      "question_id": 2,
+      "category": "abstract_algebra",
+      "name": "MMLU_test",
+      "question_text": "Find all zeros in the indicated finite field of the given polynomial with coefficients in that field. x^5 + 3x^3 + x^2 + 2x in Z_5 The options are: A) 0, B) 1, C) 0,1, D) 0,4",
+      "correct_answer": "D",
+      "model": "gemini-1.5-flash",
+      "repeat_number": 4,
+      "answer": "D) 0,4",
+      "confidence": "1"
+    }
+  ]
+}

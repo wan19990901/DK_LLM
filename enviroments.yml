@@ -10,6 +10,7 @@ dependencies:
   - scikit-learn
   - jupyter
   - transformers
+
   - pip:
     - tqdm
     - langchain-openai
@@ -18,3 +19,5 @@ dependencies:
     - langchain-community
     - pydantic
     - python-dotenv
+    - matplotlib
+    - seaborn

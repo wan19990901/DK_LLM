@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "prompt_file": "base.json",
+    "prompt_file": "CoT.json",
     "num_samples": 10,
     "llm_type": "openai",
     "temperature": 0.0
@@ -69,8 +69,8 @@
       "correct_answer": "C",
       "model": "gpt-4o-mini",
       "repeat_number": 0,
-      "answer": "24",
-      "confidence": "0.1"
+      "answer": "30",
+      "confidence": "0.9"
     },
     {
       "question_id": 1,
@@ -91,8 +91,8 @@
       "correct_answer": "C",
       "model": "gpt-4o-mini",
       "repeat_number": 2,
-      "answer": "24",
-      "confidence": "0.1"
+      "answer": "30",
+      "confidence": "0.9"
     },
     {
       "question_id": 1,
@@ -113,8 +113,8 @@
       "correct_answer": "C",
       "model": "gpt-4o-mini",
       "repeat_number": 4,
-      "answer": "120",
-      "confidence": "0.5"
+      "answer": "30",
+      "confidence": "0.9"
     },
     {
       "question_id": 2,
@@ -124,8 +124,8 @@
       "correct_answer": "D",
       "model": "gpt-4o-mini",
       "repeat_number": 0,
-      "answer": "C",
-      "confidence": "0.9"
+      "answer": "0,4",
+      "confidence": "1"
     },
     {
       "question_id": 2,
@@ -135,8 +135,8 @@
       "correct_answer": "D",
       "model": "gpt-4o-mini",
       "repeat_number": 1,
-      "answer": "0,1",
-      "confidence": "0.9"
+      "answer": "0, 4",
+      "confidence": "1"
     },
     {
       "question_id": 2,
@@ -146,8 +146,8 @@
       "correct_answer": "D",
       "model": "gpt-4o-mini",
       "repeat_number": 2,
-      "answer": "C",
-      "confidence": "0.9"
+      "answer": "0, 4",
+      "confidence": "1"
     },
     {
       "question_id": 2,
@@ -157,8 +157,8 @@
       "correct_answer": "D",
       "model": "gpt-4o-mini",
       "repeat_number": 3,
-      "answer": "C",
-      "confidence": "0.9"
+      "answer": "0,4",
+      "confidence": "1"
     },
     {
       "question_id": 2,
@@ -168,8 +168,8 @@
       "correct_answer": "D",
       "model": "gpt-4o-mini",
       "repeat_number": 4,
-      "answer": "C",
-      "confidence": "0.9"
+      "answer": "0,4",
+      "confidence": "1"
     },
     {
       "question_id": 3,
@@ -179,7 +179,7 @@
       "correct_answer": "B",
       "model": "gpt-4o-mini",
       "repeat_number": 0,
-      "answer": "C",
+      "answer": "False, True",
       "confidence": "0.9"
     },
     {
@@ -201,7 +201,7 @@
       "correct_answer": "B",
       "model": "gpt-4o-mini",
       "repeat_number": 2,
-      "answer": "C",
+      "answer": "False, True",
       "confidence": "0.9"
     },
     {
@@ -212,7 +212,7 @@
       "correct_answer": "B",
       "model": "gpt-4o-mini",
       "repeat_number": 3,
-      "answer": "C",
+      "answer": "D",
       "confidence": "0.9"
     },
     {
@@ -223,7 +223,7 @@
       "correct_answer": "B",
       "model": "gpt-4o-mini",
       "repeat_number": 4,
-      "answer": "C",
+      "answer": "False, True",
       "confidence": "0.9"
     },
     {
@@ -246,7 +246,7 @@
       "model": "gpt-4o-mini",
       "repeat_number": 1,
       "answer": "6x^2 + 4x + 6",
-      "confidence": "0.9"
+      "confidence": "1"
     },
     {
       "question_id": 4,
@@ -289,8 +289,8 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 0,
-      "answer": "C",
-      "confidence": "0.8"
+      "answer": "False, False",
+      "confidence": "0.9"
     },
     {
       "question_id": 5,
@@ -300,8 +300,8 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 1,
-      "answer": "C",
-      "confidence": "0.8"
+      "answer": "False, False",
+      "confidence": "1"
     },
     {
       "question_id": 5,
@@ -311,8 +311,8 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 2,
-      "answer": "C",
-      "confidence": "0.8"
+      "answer": "False, False",
+      "confidence": "1"
     },
     {
       "question_id": 5,
@@ -322,8 +322,8 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 3,
-      "answer": "C",
-      "confidence": "0.8"
+      "answer": "False, False",
+      "confidence": "1"
     },
     {
       "question_id": 5,
@@ -333,8 +333,8 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 4,
-      "answer": "C",
-      "confidence": "0.8"
+      "answer": "False, False",
+      "confidence": "1"
     },
     {
       "question_id": 6,
@@ -344,7 +344,7 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 0,
-      "answer": "C",
+      "answer": "True, False",
       "confidence": "0.9"
     },
     {
@@ -355,7 +355,7 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 1,
-      "answer": "C",
+      "answer": "True, False",
       "confidence": "0.9"
     },
     {
@@ -366,7 +366,7 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 2,
-      "answer": "C",
+      "answer": "True, False",
       "confidence": "0.9"
     },
     {
@@ -377,7 +377,7 @@
       "correct_answer": "A",
       "model": "gpt-4o-mini",
       "repeat_number": 3,
-      "answer": "C",
+      "answer": "True, False",
       "confidence": "0.9"
     },
     {
@@ -454,8 +454,8 @@
       "correct_answer": "B",
       "model": "gpt-4o-mini",
       "repeat_number": 0,
-      "answer": "B",
-      "confidence": "0.9"
+      "answer": "4",
+      "confidence": "1"
     },
     {
       "question_id": 8,
@@ -465,8 +465,8 @@
       "correct_answer": "B",
       "model": "gpt-4o-mini",
       "repeat_number": 1,
-      "answer": "B",
-      "confidence": "0.9"
+      "answer": "4",
+      "confidence": "1"
     },
     {
       "question_id": 8,
@@ -476,8 +476,8 @@
       "correct_answer": "B",
       "model": "gpt-4o-mini",
       "repeat_number": 2,
-      "answer": "B",
-      "confidence": "0.9"
+      "answer": "4",
+      "confidence": "1"
     },
     {
       "question_id": 8,
@@ -487,8 +487,8 @@
       "correct_answer": "B",
       "model": "gpt-4o-mini",
       "repeat_number": 3,
-      "answer": "B",
-      "confidence": "0.9"
+      "answer": "4",
+      "confidence": "1"
     },
     {
       "question_id": 8,
@@ -509,8 +509,8 @@
       "correct_answer": "C",
       "model": "gpt-4o-mini",
       "repeat_number": 0,
-      "answer": "C) 2,3",
-      "confidence": "0.9"
+      "answer": "2,3",
+      "confidence": "1"
     },
     {
       "question_id": 9,
@@ -520,8 +520,8 @@
       "correct_answer": "C",
       "model": "gpt-4o-mini",
       "repeat_number": 1,
-      "answer": "C) 2,3",
-      "confidence": "0.9"
+      "answer": "2,3",
+      "confidence": "1"
     },
     {
       "question_id": 9,
@@ -531,8 +531,8 @@
       "correct_answer": "C",
       "model": "gpt-4o-mini",
       "repeat_number": 2,
-      "answer": "C) 2,3",
-      "confidence": "0.9"
+      "answer": "2,3",
+      "confidence": "1"
     },
     {
       "question_id": 9,
@@ -542,8 +542,8 @@
       "correct_answer": "C",
       "model": "gpt-4o-mini",
       "repeat_number": 3,
-      "answer": "C) 2,3",
-      "confidence": "0.9"
+      "answer": "2,3",
+      "confidence": "1"
     },
     {
       "question_id": 9,
@@ -553,8 +553,8 @@
       "correct_answer": "C",
       "model": "gpt-4o-mini",
       "repeat_number": 4,
-      "answer": "C) 2,3",
-      "confidence": "0.9"
+      "answer": "2,3",
+      "confidence": "1"
     }
   ]
 }

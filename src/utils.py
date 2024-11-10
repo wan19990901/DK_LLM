@@ -8,6 +8,7 @@ import os
 import pandas as pd
 from collections import Counter
 
+# This is a little bit hard coded, but it's fine for now; need to change the flexibility of the parser_template
 
 def clean_json_string(json_string):
     """Extract the JSON dictionary from the response string"""
@@ -32,29 +33,6 @@ def format_response(response):
         raise ValueError("Could not parse response into expected format")
 
 
-
-def check_correctness_MC(correct_answer,cot_answers,question):
-    correctness_list = []
-    for i in range(len(cot_answers)):
-        correct = correct_answer
-        cot = cot_answers[i]
-        q = question
-        cot = str(cot)
-        if (cot == correct):
-            correctness_list.append(1)
-            continue
-        # Extract the options and their corresponding values from the question
-        options = {}
-        for option in ['a', 'b', 'c', 'd', 'e']:
-            if option + ' )' in q:
-                value = q.split(option + ' )')[-1].strip().split(',')[0].strip()
-                options[option] = value
-        if options[correct] in cot:
-            correctness_list.append(1)
-        else:
-            correctness_list.append(0)
-
-    return correctness_list
 
 def extract_nums(s):
     s = s.replace(",", "")
