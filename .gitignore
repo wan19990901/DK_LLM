@@ -1,5 +1,6 @@
 # Ignore all Jupyter notebook files
 *.ipynb
+.env
 
 # Ignore Jupyter notebook checkpoints
 .ipynb_checkpoints/
