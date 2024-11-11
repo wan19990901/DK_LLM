@@ -9,7 +9,11 @@ import pandas as pd
 from collections import Counter
 
 # This is a little bit hard coded, but it's fine for now; need to change the flexibility of the parser_template
-
+def extract_json(text):
+    pattern = r'{.*?}'
+    match = re.search(pattern, text)
+    return match.group() if match else text
+    
 def extract_nums(s):
     s = s.replace(",", "")
     nums = re.findall(r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?", s)
