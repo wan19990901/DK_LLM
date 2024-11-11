@@ -6,7 +6,9 @@ import pandas as pd
 from tqdm import tqdm
 import json
 from typing import Dict, List, Any
-from datetime import datetime
+import time
+from collections import deque
+from datetime import datetime, timedelta
 
 DATA_DIR = '../data/'
 
@@ -48,9 +50,40 @@ def save_json(results: Dict[str, Any], llm_config: Dict[str, Any]) -> None:
     with open(file_path, 'w') as f:
         json.dump(results, f, indent=2)
 
+
+
+class RateLimiter:
+    def __init__(self, max_requests, time_window):
+        self.max_requests = max_requests
+        self.time_window = time_window  # in seconds
+        self.requests = deque()
+
+    def wait_if_needed(self):
+        now = datetime.now()
+        
+        # Remove requests older than the time window
+        while self.requests and (now - self.requests[0]) > timedelta(seconds=self.time_window):
+            self.requests.popleft()
+        
+        # If we've hit the rate limit, wait until we can make another request
+        if len(self.requests) >= self.max_requests:
+            wait_time = (self.requests[0] + timedelta(seconds=self.time_window) - now).total_seconds()
+            if wait_time > 0:
+                print(f"\nRate limit reached. Waiting {wait_time:.2f} seconds...")
+                time.sleep(wait_time)
+                # Clean up old requests again after waiting
+                while self.requests and (datetime.now() - self.requests[0]) > timedelta(seconds=self.time_window):
+                    self.requests.popleft()
+        
+        # Add the new request
+        self.requests.append(now)
+
 def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
     """Process questions and collect results"""
     MAX_PARSE_ATTEMPTS = 3  # Maximum number of attempts for parsing errors
+    
+    # Initialize rate limiter for Gemini
+    rate_limiter = RateLimiter(max_requests=15, time_window=61) if llm_config['llm_type'] == 'gemini' else None
     
     with open(llm_config['api_key_link'], 'r') as f:
         api_key = f.read().strip()
@@ -94,6 +127,10 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
         for repeat in tqdm(range(NUM_OF_REPEAT), colour='green', desc='Repeats', position=1):
             arguments_dict = {'question': row['Question']}
             
+            # Apply rate limiting if using Gemini
+            if rate_limiter:
+                rate_limiter.wait_if_needed()
+            
             # Try multiple times for each repeat
             success = False
             last_error = None
@@ -102,7 +139,6 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
             while not success and parse_attempts < MAX_PARSE_ATTEMPTS:
                 try:
                     response = cot_agent.invoke(arguments_dict)
-                    print(1)
                     # Try to update result entry to verify response format
                     result_entry = base_result.copy()
                     result_entry.update({
@@ -116,6 +152,9 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     parse_attempts += 1
                     if parse_attempts < MAX_PARSE_ATTEMPTS:
                         print(f"Attempt {parse_attempts} failed: {last_error}, retrying...")
+                        # Apply rate limiting for retries as well if using Gemini
+                        if rate_limiter:
+                            rate_limiter.wait_if_needed()
             
             # If we haven't successfully created a result entry, create one with error info
             if not success:
@@ -135,7 +174,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run GSM8K evaluation')
     parser.add_argument('--llm_type', default='anthropic', 
-                       choices=['openai', 'ollama', 'anthropic', 'gemini', 'azure'], 
+                       choices=['openai', 'ollama', 'anthropic', 'gemini', 'azure', 'lambda'], 
                        help='LLM type')
     parser.add_argument('--api_key_file', default='../Api_keys/claude_api.txt', 
                        help='API key file')
