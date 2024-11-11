@@ -58,10 +58,9 @@ class LLM_agent:
             raise ValueError(f"Missing required input variables: {missing_vars}")
 
         chain = self.chat_prompt | self.llm
-        response = chain.invoke(arg_dict)
-        # print(response)
-        # Format response based on LLM type
-        formatted_response = format_response(response)
+        output = chain.invoke(arg_dict)
+        output_text = extract_json(output.content)
+        formatted_response = parser.invoke(output_text)
         return formatted_response
 
     def setup_prompt(self, prompt_json_path: str, parser_obj: BaseModel) -> None:
