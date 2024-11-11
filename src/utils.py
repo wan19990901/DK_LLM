@@ -10,30 +10,6 @@ from collections import Counter
 
 # This is a little bit hard coded, but it's fine for now; need to change the flexibility of the parser_template
 
-def clean_json_string(json_string):
-    """Extract the JSON dictionary from the response string"""
-    # Try to find the last occurrence of a dictionary-like pattern
-    pattern = r'(\{[^{]*"Answer"[^}]*"Confidence"[^}]*\}|\{[^{]*"Confidence"[^}]*"Answer"[^}]*\})'
-    matches = re.findall(pattern, json_string)
-    
-    if matches:
-        # Take the last match as it's typically the final answer
-        json_dict_str = matches[-1]
-        return json_dict_str.strip()
-    else:
-        raise ValueError("No JSON dictionary found in response")
-
-def format_response(response):
-    """Format response into a dictionary"""
-    try:
-        json_dict_str = clean_json_string(response.content)
-        return json.loads(json_dict_str)
-    except json.JSONDecodeError as e:
-        print(f"Failed to parse response: {response.content}")
-        raise ValueError("Could not parse response into expected format")
-
-
-
 def extract_nums(s):
     s = s.replace(",", "")
     nums = re.findall(r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?", s)
