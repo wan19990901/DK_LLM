@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, model_validator
-from langchain_core.output_parsers import PydanticOutputParser
 
 
 class Base_Parser(BaseModel):

@@ -6,7 +6,6 @@ from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import AIMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import AzureChatOpenAI
-from typing import List, Optional
 import re
 import os
 from typing import List, Optional, Dict, Any, Tuple, Set
@@ -40,6 +39,12 @@ class LLM_agent:
             os.environ["GOOGLE_API_KEY"] = self.api_key
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = '/home/guangya/.config/gcloud/application_default_credentials.json'
             self.llm = ChatGoogleGenerativeAI(model=model, temperature=temperature, gemini_api_key=self.api_key)
+        elif self.llm_type == 'lambda':
+            self.llm = ChatOpenAI(
+                api_key=self.api_key,
+                base_url="https://api.lambdalabs.com/v1",  # Add this to your configuration
+                model=self.model
+            )
         elif llm_type == 'ollama':
             self.llm = ChatOllama(model=model, temperature=temperature)
         else:
@@ -60,7 +65,7 @@ class LLM_agent:
         chain = self.chat_prompt | self.llm
         output = chain.invoke(arg_dict)
         output_text = extract_json(output.content)
-        formatted_response = parser.invoke(output_text)
+        formatted_response = self.parser.invoke(output_text)
         return formatted_response
 
     def setup_prompt(self, prompt_json_path: str, parser_obj: BaseModel) -> None:
@@ -75,7 +80,7 @@ class LLM_agent:
                 messages.append((key, val))
 
         # Set up the parser and prompt
-        self.parser = PydanticOutputParser(pydantic_object=parser_obj)
+        self.parser = JsonOutputParser(pydantic_object=parser_obj)
         self.num_of_llm_output = len(parser_obj.__fields__)
         self.chat_prompt = ChatPromptTemplate(messages,partial_variables = {"format_instructions": self.parser.get_format_instructions()})
 
