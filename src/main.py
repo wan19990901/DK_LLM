@@ -151,7 +151,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     last_error = str(e)
                     parse_attempts += 1
                     if parse_attempts < MAX_PARSE_ATTEMPTS:
-                        print(f"Attempt {parse_attempts} failed: {last_error}, retrying...")
+                        # print(f"Attempt {parse_attempts} failed: {last_error}, retrying...")
                         # Apply rate limiting for retries as well if using Gemini
                         if rate_limiter:
                             rate_limiter.wait_if_needed()

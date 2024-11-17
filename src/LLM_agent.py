@@ -43,7 +43,7 @@ class LLM_agent:
             self.llm = ChatOpenAI(
                 api_key=self.api_key,
                 base_url="https://api.lambdalabs.com/v1",  # Add this to your configuration
-                model=self.model
+                model= model
             )
         elif llm_type == 'ollama':
             self.llm = ChatOllama(model=model, temperature=temperature)
@@ -65,7 +65,13 @@ class LLM_agent:
         chain = self.chat_prompt | self.llm
         output = chain.invoke(arg_dict)
         output_text = extract_json(output.content)
-        formatted_response = self.parser.invoke(output_text)
+        try:
+            formatted_response = self.parser.invoke(output_text)
+        except:
+            print(output.content)
+            print(111)
+            print(output_text)
+            print(222)
         return formatted_response
 
     def setup_prompt(self, prompt_json_path: str, parser_obj: BaseModel) -> None:
