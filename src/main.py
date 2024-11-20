@@ -13,9 +13,8 @@ from datetime import datetime, timedelta
 DATA_DIR = '../data/'
 
 # Experiment Config
-DF_NAME = 'MMLU'
-NUM_OF_SAMPLES = 10
-NUM_OF_REPEAT = 5
+NUM_OF_SAMPLES = 100
+NUM_OF_REPEAT = 10
 
 def get_llm_config(args) -> Dict[str, Any]:
     """Get LLM configuration from arguments"""
@@ -24,8 +23,9 @@ def get_llm_config(args) -> Dict[str, Any]:
         'api_key_link': args.api_key_file,
         'model': args.model,
         'prompt_link': args.prompt_file,
-        'parser_template': Base_Parser, # We need to make this more flexible
-        'temperature': args.temperature,    
+        'parser_template': Base_Parser,  # We need to make this more flexible
+        'temperature': args.temperature,
+        'dataset': args.dataset,  # Add dataset to config
     }
 
 def save_json(results: Dict[str, Any], llm_config: Dict[str, Any]) -> None:
@@ -36,7 +36,7 @@ def save_json(results: Dict[str, Any], llm_config: Dict[str, Any]) -> None:
     
     # Create filename using model, dataset name, and prompt file name
     prompt_name = os.path.splitext(os.path.basename(llm_config['prompt_link']))[0]  # Get prompt name without extension
-    file_name = f'{DF_NAME}_{prompt_name}.json'
+    file_name = f'{llm_config["dataset"]}_{prompt_name}.json'
     file_path = os.path.join(storage_dir, file_name)
     
     # Add metadata
@@ -88,7 +88,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
     with open(llm_config['api_key_link'], 'r') as f:
         api_key = f.read().strip()
 
-    df = pd.read_csv(os.path.join(DATA_DIR, f'{DF_NAME}.csv'))
+    df = pd.read_csv(os.path.join(DATA_DIR, f'{llm_config["dataset"]}.csv'))
     df_subset = df[:NUM_OF_SAMPLES]
 
     results_dict = {
@@ -100,18 +100,18 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
         },
         'results': []
     }
-
+    cot_agent = LLM_agent(
+        llm_type=llm_config['llm_type'], 
+        api_key=api_key, 
+        model=llm_config['model'],
+        temperature=llm_config['temperature']
+    )
     # Process each question
     for row_idx in tqdm(range(start_index, len(df_subset)), colour='blue', desc='Questions', position=0):
         row = df_subset.iloc[row_idx]
         
         # Initialize agent once per question
-        cot_agent = LLM_agent(
-            llm_type=llm_config['llm_type'], 
-            api_key=api_key, 
-            model=llm_config['model'],
-            temperature=llm_config['temperature']
-        )
+
         cot_agent.setup_prompt(llm_config['prompt_link'], llm_config['parser_template'])
 
         base_result = {
@@ -139,6 +139,8 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
             while not success and parse_attempts < MAX_PARSE_ATTEMPTS:
                 try:
                     response = cot_agent.invoke(arguments_dict)
+                    print(1)
+                    print(response)
                     # Try to update result entry to verify response format
                     result_entry = base_result.copy()
                     result_entry.update({
@@ -151,7 +153,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     last_error = str(e)
                     parse_attempts += 1
                     if parse_attempts < MAX_PARSE_ATTEMPTS:
-                        # print(f"Attempt {parse_attempts} failed: {last_error}, retrying...")
+                        print(f"Attempt {parse_attempts} failed: {last_error}, retrying...")
                         # Apply rate limiting for retries as well if using Gemini
                         if rate_limiter:
                             rate_limiter.wait_if_needed()
@@ -186,7 +188,9 @@ if __name__ == '__main__':
                        help='Temperature for LLM')
     parser.add_argument('--start_index', type=int, default=0, 
                        help='Starting index for processing')
-    
+    # Add new dataset argument
+    parser.add_argument('--dataset', default='GSM8K', 
+                       help='Dataset name (default: GSM8K)')
     args = parser.parse_args()
     llm_config = get_llm_config(args)
     process_questions(llm_config, args.start_index)

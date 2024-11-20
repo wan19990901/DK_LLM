@@ -65,13 +65,9 @@ class LLM_agent:
         chain = self.chat_prompt | self.llm
         output = chain.invoke(arg_dict)
         output_text = extract_json(output.content)
-        try:
-            formatted_response = self.parser.invoke(output_text)
-        except:
-            print(output.content)
-            print(111)
-            print(output_text)
-            print(222)
+        print(0)
+        print(output_text)
+        formatted_response = self.parser.invoke(output_text)
         return formatted_response
 
     def setup_prompt(self, prompt_json_path: str, parser_obj: BaseModel) -> None:

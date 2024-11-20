@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class Base_Parser(BaseModel):
-    Answer: str = Field(description="A single answer only to the provided question")
-    Confidence: str = Field(description="Confidence for final answer; it should be a floating number from 0 to 1 where 0 to 0.5 means less confident and 0.5 to 1 means more confident ")
+    Answer: str = Field(description="Just the answer only to the provided question without explanation")
+    Confidence: str = Field(description="Confidence for final answer; it should be a floating number from 0 to 1 where 0 to 0.5 means less confident and 0.5 to 1 means more confident")
 
     # # You can add custom validation logic easily with Pydantic.
     # @model_validator(mode="before")
