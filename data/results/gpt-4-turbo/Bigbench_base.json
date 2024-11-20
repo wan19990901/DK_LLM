@@ -1,0 +1,120 @@
+{
+  "metadata": {
+    "prompt_file": "base.json",
+    "num_samples": 10,
+    "llm_type": "azure",
+    "temperature": 0.0
+  },
+  "results": [
+    {
+      "question_id": 0,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The patient was referred to the specialist because he had a rare skin condition.\n  Options:\n(A) Ambiguous\n(B) The patient had a skin condition\n(C) The specialist had a skin condition",
+      "correct_answer": "A",
+      "model": "gpt-4-turbo",
+      "repeat_number": 0,
+      "answer": "A",
+      "confidence": "1"
+    },
+    {
+      "question_id": 0,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The patient was referred to the specialist because he had a rare skin condition.\n  Options:\n(A) Ambiguous\n(B) The patient had a skin condition\n(C) The specialist had a skin condition",
+      "correct_answer": "A",
+      "model": "gpt-4-turbo",
+      "repeat_number": 1,
+      "answer": "A",
+      "confidence": "1"
+    },
+    {
+      "question_id": 0,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The patient was referred to the specialist because he had a rare skin condition.\n  Options:\n(A) Ambiguous\n(B) The patient had a skin condition\n(C) The specialist had a skin condition",
+      "correct_answer": "A",
+      "model": "gpt-4-turbo",
+      "repeat_number": 2,
+      "answer": "A",
+      "confidence": "1"
+    },
+    {
+      "question_id": 0,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The patient was referred to the specialist because he had a rare skin condition.\n  Options:\n(A) Ambiguous\n(B) The patient had a skin condition\n(C) The specialist had a skin condition",
+      "correct_answer": "A",
+      "model": "gpt-4-turbo",
+      "repeat_number": 3,
+      "answer": "A",
+      "confidence": "1.0"
+    },
+    {
+      "question_id": 0,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The patient was referred to the specialist because he had a rare skin condition.\n  Options:\n(A) Ambiguous\n(B) The patient had a skin condition\n(C) The specialist had a skin condition",
+      "correct_answer": "A",
+      "model": "gpt-4-turbo",
+      "repeat_number": 4,
+      "answer": "A",
+      "confidence": "1"
+    },
+    {
+      "question_id": 1,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The scientist collaborated with the artist, and he shared a story.\n  Options:\n(A) Ambiguous\n(B) The artist shared a story\n(C) The scientist shared a story",
+      "correct_answer": "C",
+      "model": "gpt-4-turbo",
+      "repeat_number": 0,
+      "answer": "A",
+      "confidence": "1"
+    },
+    {
+      "question_id": 1,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The scientist collaborated with the artist, and he shared a story.\n  Options:\n(A) Ambiguous\n(B) The artist shared a story\n(C) The scientist shared a story",
+      "correct_answer": "C",
+      "model": "gpt-4-turbo",
+      "repeat_number": 1,
+      "answer": "A",
+      "confidence": "1"
+    },
+    {
+      "question_id": 1,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The scientist collaborated with the artist, and he shared a story.\n  Options:\n(A) Ambiguous\n(B) The artist shared a story\n(C) The scientist shared a story",
+      "correct_answer": "C",
+      "model": "gpt-4-turbo",
+      "repeat_number": 2,
+      "answer": "A",
+      "confidence": "1"
+    },
+    {
+      "question_id": 1,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The scientist collaborated with the artist, and he shared a story.\n  Options:\n(A) Ambiguous\n(B) The artist shared a story\n(C) The scientist shared a story",
+      "correct_answer": "C",
+      "model": "gpt-4-turbo",
+      "repeat_number": 3,
+      "answer": "A",
+      "confidence": "1.0"
+    },
+    {
+      "question_id": 1,
+      "category": "disambiguation_qa",
+      "name": "BigBench_easy",
+      "question_text": "In the following sentences, explain the antecedent of the pronoun (which thing the pronoun refers to), or state that it is ambiguous.\n\nSentence: The scientist collaborated with the artist, and he shared a story.\n  Options:\n(A) Ambiguous\n(B) The artist shared a story\n(C) The scientist shared a story",
+      "correct_answer": "C",
+      "model": "gpt-4-turbo",
+      "repeat_number": 4,
+      "answer": "A",
+      "confidence": "1"
+    }
+  ]
+}

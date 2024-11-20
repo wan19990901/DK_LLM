@@ -14,7 +14,7 @@
       "correct_answer": "B",
       "model": "gemini-1.5-flash",
       "repeat_number": 0,
-      "answer": "D) 6",
+      "answer": "B) 4",
       "confidence": "1.0"
     },
     {
@@ -25,7 +25,7 @@
       "correct_answer": "B",
       "model": "gemini-1.5-flash",
       "repeat_number": 1,
-      "answer": "D) 6",
+      "answer": "B) 4",
       "confidence": "1.0"
     },
     {
@@ -36,7 +36,7 @@
       "correct_answer": "B",
       "model": "gemini-1.5-flash",
       "repeat_number": 2,
-      "answer": "D) 6",
+      "answer": "B) 4",
       "confidence": "1.0"
     },
     {
@@ -47,7 +47,7 @@
       "correct_answer": "B",
       "model": "gemini-1.5-flash",
       "repeat_number": 3,
-      "answer": "D) 6",
+      "answer": "B) 4",
       "confidence": "1.0"
     },
     {
@@ -58,7 +58,7 @@
       "correct_answer": "B",
       "model": "gemini-1.5-flash",
       "repeat_number": 4,
-      "answer": "D) 6",
+      "answer": "B) 4",
       "confidence": "1.0"
     },
     {
@@ -69,8 +69,8 @@
       "correct_answer": "C",
       "model": "gemini-1.5-flash",
       "repeat_number": 0,
-      "answer": "The index of <p> in S_5 is 24. So the answer is C).",
-      "confidence": "1"
+      "answer": "B) 2",
+      "confidence": "1.0"
     },
     {
       "question_id": 1,
@@ -80,8 +80,8 @@
       "correct_answer": "C",
       "model": "gemini-1.5-flash",
       "repeat_number": 1,
-      "answer": "The index of <p> in S_5 is 24. So the answer is C).",
-      "confidence": "1"
+      "answer": "B) 2",
+      "confidence": "1.0"
     },
     {
       "question_id": 1,
@@ -91,8 +91,8 @@
       "correct_answer": "C",
       "model": "gemini-1.5-flash",
       "repeat_number": 2,
-      "answer": "D) 120",
-      "confidence": "1"
+      "answer": "B) 2",
+      "confidence": "1.0"
     },
     {
       "question_id": 1,
@@ -102,8 +102,8 @@
       "correct_answer": "C",
       "model": "gemini-1.5-flash",
       "repeat_number": 3,
-      "answer": "The index of <p> in S_5 is 24. So the answer is C).",
-      "confidence": "1"
+      "answer": "B) 2",
+      "confidence": "1.0"
     },
     {
       "question_id": 1,
@@ -113,8 +113,8 @@
       "correct_answer": "C",
       "model": "gemini-1.5-flash",
       "repeat_number": 4,
-      "answer": "D) 120",
-      "confidence": "1"
+      "answer": "B) 2",
+      "confidence": "1.0"
     },
     {
       "question_id": 2,
@@ -125,7 +125,7 @@
       "model": "gemini-1.5-flash",
       "repeat_number": 0,
       "answer": "D) 0,4",
-      "confidence": "1"
+      "confidence": "1.0"
     },
     {
       "question_id": 2,
@@ -136,7 +136,7 @@
       "model": "gemini-1.5-flash",
       "repeat_number": 1,
       "answer": "D) 0,4",
-      "confidence": "1"
+      "confidence": "1.0"
     },
     {
       "question_id": 2,
@@ -147,7 +147,7 @@
       "model": "gemini-1.5-flash",
       "repeat_number": 2,
       "answer": "D) 0,4",
-      "confidence": "1"
+      "confidence": "1.0"
     },
     {
       "question_id": 2,
@@ -158,7 +158,7 @@
       "model": "gemini-1.5-flash",
       "repeat_number": 3,
       "answer": "D) 0,4",
-      "confidence": "1"
+      "confidence": "1.0"
     },
     {
       "question_id": 2,
@@ -169,7 +169,7 @@
       "model": "gemini-1.5-flash",
       "repeat_number": 4,
       "answer": "D) 0,4",
-      "confidence": "1"
+      "confidence": "1.0"
     }
   ]
 }

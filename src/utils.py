@@ -10,9 +10,17 @@ from collections import Counter
 
 # This is a little bit hard coded, but it's fine for now; need to change the flexibility of the parser_template
 def extract_json(text):
-    pattern = r'{.*?}'
-    match = re.search(pattern, text)
-    return match.group() if match else text
+    # Find the first opening { and last closing } bracket
+    start = text.find('{')
+    end = text.rfind('}')
+    
+    if start == -1 or end == -1:
+        return text
+        
+    # Extract the JSON string
+    json_str = text[start:end + 1]
+    
+    return json_str
     
 def extract_nums(s):
     s = s.replace(",", "")
