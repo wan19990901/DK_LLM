@@ -8,6 +8,19 @@ import os
 import pandas as pd
 from collections import Counter
 
+from Constants import BINARY_CHOICE_SET, MULTIPLE_CHOICE_SET
+from QuestionType import QuestionType
+
+def parse_correct_answer(correct_answer):
+    correct_answer = str(correct_answer).strip()
+    if correct_answer[0].isdigit() or (correct_answer[0] == "-" and len(correct_answer) > 1 and correct_answer[1].isdigit()):
+        return QuestionType.GAP_FILLING_NUMBER
+    if correct_answer[0].isalpha() and len(correct_answer) == 1 and correct_answer[0].lower() in MULTIPLE_CHOICE_SET:
+        return QuestionType.MULTIPLE_CHOICE
+    if correct_answer[0].isalpha() and len(correct_answer) > 1  and correct_answer.lower() in BINARY_CHOICE_SET:
+        return QuestionType.BINARY_CHOICE
+    return QuestionType.UNDEFINED
+
 # This is a little bit hard coded, but it's fine for now; need to change the flexibility of the parser_template
 def extract_json(text):
     # Find the first opening { and last closing } bracket
