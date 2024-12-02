@@ -10,10 +10,16 @@ import time
 from collections import deque
 from datetime import datetime, timedelta
 
+from parsers import GapFillingNumberParser
+from parsers import BinaryChoiceParser
+from parsers import MultipleChoiceParser
+from utils import parse_correct_answer
+from QuestionType import QuestionType
+
 DATA_DIR = '../data/'
 
 # Experiment Config
-NUM_OF_SAMPLES = 100
+NUM_OF_SAMPLES = 50
 NUM_OF_REPEAT = 10
 
 def get_llm_config(args) -> Dict[str, Any]:
@@ -106,11 +112,22 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
         model=llm_config['model'],
         temperature=llm_config['temperature']
     )
+
+    report_properties = {
+        "question_number": len(df_subset),
+        "total_answers": len(df_subset) * NUM_OF_REPEAT,
+        "successfully_parsed": 0,
+        "is_correct_count": 0
+    }
+
     # Process each question
     for row_idx in tqdm(range(start_index, len(df_subset)), colour='blue', desc='Questions', position=0):
         row = df_subset.iloc[row_idx]
         
-        # Initialize agent once per question
+        correct_answer = row.get('Correct Answer', None)
+        question_type = parse_correct_answer(correct_answer)
+        if (question_type != QuestionType.MULTIPLE_CHOICE):
+            continue
 
         cot_agent.setup_prompt(llm_config['prompt_link'], llm_config['parser_template'])
 
@@ -125,6 +142,15 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
 
         # Multiple repeats for each question
         for repeat in tqdm(range(NUM_OF_REPEAT), colour='green', desc='Repeats', position=1):
+            correct_answer = base_result['correct_answer']
+            question_type = parse_correct_answer(correct_answer)
+
+            if (question_type == QuestionType.UNDEFINED):
+                base_result.update({
+                    "fail_reason": f"Unable to identify question type for {correct_answer}"
+                })
+                break
+
             arguments_dict = {'question': row['Question']}
             
             # Apply rate limiting if using Gemini
@@ -139,8 +165,6 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
             while not success and parse_attempts < MAX_PARSE_ATTEMPTS:
                 try:
                     response = cot_agent.invoke(arguments_dict)
-                    print(1)
-                    print(response)
                     # Try to update result entry to verify response format
                     result_entry = base_result.copy()
                     result_entry.update({
@@ -148,6 +172,39 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                         'answer': response['Answer'],
                         'confidence': response['Confidence']
                     })
+
+                    try:
+                        match question_type:
+                            case QuestionType.GAP_FILLING_NUMBER:
+                                parsed_answer = GapFillingNumberParser.parse_answer(result_entry["answer"])
+                                is_correct = GapFillingNumberParser.compare_answer(parsed_answer, correct_answer)
+                                result_entry.update({
+                                    "parsed_answer": parsed_answer,
+                                    "is_correct": is_correct
+                                })
+                                report_properties.update({"parsed_number": report_properties["parsed_number"]+1})
+                            
+                            case QuestionType.BINARY_CHOICE:
+                                parsed_answer = BinaryChoiceParser.parse_answer(result_entry["answer"])
+                                is_correct = BinaryChoiceParser.compare_answer(parsed_answer, correct_answer)
+                                result_entry.update({
+                                    "parsed_answer": parsed_answer,
+                                    "is_correct": is_correct
+                                })
+                                report_properties.update({"parsed_number": report_properties["parsed_number"]+1})
+
+                            case QuestionType.MULTIPLE_CHOICE:
+                                parsed_answer = MultipleChoiceParser.parse_answer(result_entry["answer"])
+                                is_correct = MultipleChoiceParser.compare_answer(parsed_answer, correct_answer, base_result['question_text'])
+                                result_entry.update({
+                                    "parsed_answer": parsed_answer,
+                                    "is_correct": is_correct
+                                })
+                                report_properties.update({"parsed_number": report_properties["parsed_number"]+1})
+                    except Exception as e:
+                        result_entry.update({
+                            "fail_reason": e
+                        })
                     success = True
                 except Exception as e:
                     last_error = str(e)
@@ -157,6 +214,10 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                         # Apply rate limiting for retries as well if using Gemini
                         if rate_limiter:
                             rate_limiter.wait_if_needed()
+                    else:
+                        result_entry.update({
+                            "fail_reason": f"Error occur when invoking agent: {e}"
+                        })
             
             # If we haven't successfully created a result entry, create one with error info
             if not success:
@@ -167,11 +228,18 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     'confidence': None
                 })
             
+            if "is_correct" not in result_entry:
+                result_entry.update({"is_correct": None})
+
+            if result_entry["is_correct"]:
+                report_properties.update({"is_correct_count": report_properties["is_correct_count"]+1})
+
             results_dict['results'].append(result_entry)
 
         # Save results after completing all repeats for the current question
-        print(f"\nSaving results after completing question {row_idx}")
-        save_json(results_dict, llm_config)
+    print(f"\nSaving results after completing question {row_idx}")
+    save_json(results_dict, llm_config)
+    print(report_properties)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run GSM8K evaluation')
