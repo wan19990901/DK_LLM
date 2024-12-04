@@ -1,6 +1,6 @@
 import argparse
 from LLM_agent import LLM_agent
-from Parsers import Base_Parser
+from Parsers import Base_Parser,CoT_Parser
 import os
 import pandas as pd
 from tqdm import tqdm
@@ -23,7 +23,7 @@ def get_llm_config(args) -> Dict[str, Any]:
         'api_key_link': args.api_key_file,
         'model': args.model,
         'prompt_link': args.prompt_file,
-        'parser_template': Base_Parser,  # We need to make this more flexible
+        'parser_template': CoT_Parser,  # We need to make this more flexible
         'temperature': args.temperature,
         'dataset': args.dataset,  # Add dataset to config
     }
@@ -146,7 +146,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     result_entry.update({
                         'repeat_number': repeat,
                         'answer': response['Answer'],
-                        'confidence': response['Confidence']
+                        'reasoning': response['reasoning'] # change this to confidence later
                     })
                     success = True
                 except Exception as e:
@@ -164,7 +164,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                 result_entry.update({
                     'repeat_number': repeat,
                     'answer': f"Error after {MAX_PARSE_ATTEMPTS} attempts: {last_error}",
-                    'confidence': None
+                    'reasoning': None
                 })
             
             results_dict['results'].append(result_entry)

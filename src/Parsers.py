@@ -13,3 +13,6 @@ class Base_Parser(BaseModel):
     #     if setup and setup[-1] != "?":
     #         raise ValueError("Badly formed question!")
     #     return values
+class CoT_Parser(BaseModel):
+    Answer: str = Field(description="Just the answer only to the provided question without explanation")
+    Reasoning: str = Field(description="Provide your step-by-step reasoning here")

@@ -1,0 +1,4 @@
+{
+    "system": "Read the question, analyze it step by step, and provide your answer",
+    "human": "{question}"
+}
