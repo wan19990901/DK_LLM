@@ -1,6 +1,6 @@
 import argparse
 from LLM_agent import LLM_agent
-from Parsers import Base_Parser
+from Parsers import Base_Parser,CoT_Parser
 import os
 import pandas as pd
 from tqdm import tqdm
@@ -170,7 +170,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     result_entry.update({
                         'repeat_number': repeat,
                         'answer': response['Answer'],
-                        'confidence': response['Confidence']
+                        'confidence': response['Confidence'] # Change this later
                     })
 
                     try:
@@ -225,7 +225,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                 result_entry.update({
                     'repeat_number': repeat,
                     'answer': f"Error after {MAX_PARSE_ATTEMPTS} attempts: {last_error}",
-                    'confidence': None
+                    'confidence': None # Need to make this more flexible; 
                 })
             
             if "is_correct" not in result_entry:
