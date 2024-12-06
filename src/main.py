@@ -1,6 +1,6 @@
 import argparse
 from LLM_agent import LLM_agent
-from Parsers import Base_Parser,CoT_Parser
+from Parsers import CoT_Parser, Confidence_Parser
 import os
 import pandas as pd
 from tqdm import tqdm
@@ -22,14 +22,30 @@ DATA_DIR = '../data/'
 NUM_OF_SAMPLES = 50
 NUM_OF_REPEAT = 10
 
+# Set to below value if want to process below question type only
+# QuestionType.GAP_FILLING_NUMBER
+# QuestionType.MULTIPLE_CHOICE
+# QuestionType.BINARY_CHOICE
+
+SELECT_QUESTION_TYPE = None
+
 def get_llm_config(args) -> Dict[str, Any]:
     """Get LLM configuration from arguments"""
+
+    match args.parser_type.lower():
+        case "confidence_parser":
+            parser = Confidence_Parser
+        case "cot_parser":
+            parser = CoT_Parser
+        case _:
+            parser = Confidence_Parser
+
     return {
         'llm_type': args.llm_type,
         'api_key_link': args.api_key_file,
         'model': args.model,
         'prompt_link': args.prompt_file,
-        'parser_template': Base_Parser,  # We need to make this more flexible
+        'parser_template': parser,  # We need to make this more flexible
         'temperature': args.temperature,
         'dataset': args.dataset,  # Add dataset to config
     }
@@ -113,6 +129,8 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
         temperature=llm_config['temperature']
     )
 
+    cot_agent.setup_prompt(llm_config['prompt_link'], llm_config['parser_template'])
+
     report_properties = {
         "question_number": len(df_subset),
         "total_answers": len(df_subset) * NUM_OF_REPEAT,
@@ -123,13 +141,6 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
     # Process each question
     for row_idx in tqdm(range(start_index, len(df_subset)), colour='blue', desc='Questions', position=0):
         row = df_subset.iloc[row_idx]
-        
-        correct_answer = row.get('Correct Answer', None)
-        question_type = parse_correct_answer(correct_answer)
-        if (question_type != QuestionType.MULTIPLE_CHOICE):
-            continue
-
-        cot_agent.setup_prompt(llm_config['prompt_link'], llm_config['parser_template'])
 
         base_result = {
             'question_id': row_idx,
@@ -140,16 +151,14 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
             'model': llm_config['model']
         }
 
+        correct_answer = row.get('Correct Answer', None)
+        question_type = parse_correct_answer(correct_answer)
+
+        if (SELECT_QUESTION_TYPE and question_type != SELECT_QUESTION_TYPE):
+            continue
+
         # Multiple repeats for each question
         for repeat in tqdm(range(NUM_OF_REPEAT), colour='green', desc='Repeats', position=1):
-            correct_answer = base_result['correct_answer']
-            question_type = parse_correct_answer(correct_answer)
-
-            if (question_type == QuestionType.UNDEFINED):
-                base_result.update({
-                    "fail_reason": f"Unable to identify question type for {correct_answer}"
-                })
-                break
 
             arguments_dict = {'question': row['Question']}
             
@@ -167,45 +176,39 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     response = cot_agent.invoke(arguments_dict)
                     # Try to update result entry to verify response format
                     result_entry = base_result.copy()
+
+                    for key, value in response.items():
+                        result_entry.update({key.lower(): value})
+
+                    match question_type:
+                        case QuestionType.GAP_FILLING_NUMBER:
+                            parsed_answer = GapFillingNumberParser.parse_answer(result_entry["answer"])
+                            is_correct = GapFillingNumberParser.compare_answer(parsed_answer, correct_answer)
+                        
+                        case QuestionType.BINARY_CHOICE:
+                            parsed_answer = BinaryChoiceParser.parse_answer(result_entry["answer"])
+                            is_correct = BinaryChoiceParser.compare_answer(parsed_answer, correct_answer)
+
+                        case QuestionType.MULTIPLE_CHOICE:
+                            parsed_answer = MultipleChoiceParser.parse_answer(result_entry["answer"], base_result['question_text'])
+                            is_correct = MultipleChoiceParser.compare_answer(parsed_answer, correct_answer)
+
+                        case _:
+                            raise TypeError(f"Unable to identify question type for {correct_answer}")
+
                     result_entry.update({
-                        'repeat_number': repeat,
-                        'answer': response['Answer'],
-                        'confidence': response['Confidence'] # Change this later
+                        "parsed_answer": parsed_answer,
+                        "is_correct": is_correct
                     })
 
-                    try:
-                        match question_type:
-                            case QuestionType.GAP_FILLING_NUMBER:
-                                parsed_answer = GapFillingNumberParser.parse_answer(result_entry["answer"])
-                                is_correct = GapFillingNumberParser.compare_answer(parsed_answer, correct_answer)
-                                result_entry.update({
-                                    "parsed_answer": parsed_answer,
-                                    "is_correct": is_correct
-                                })
-                                report_properties.update({"parsed_number": report_properties["parsed_number"]+1})
-                            
-                            case QuestionType.BINARY_CHOICE:
-                                parsed_answer = BinaryChoiceParser.parse_answer(result_entry["answer"])
-                                is_correct = BinaryChoiceParser.compare_answer(parsed_answer, correct_answer)
-                                result_entry.update({
-                                    "parsed_answer": parsed_answer,
-                                    "is_correct": is_correct
-                                })
-                                report_properties.update({"parsed_number": report_properties["parsed_number"]+1})
-
-                            case QuestionType.MULTIPLE_CHOICE:
-                                parsed_answer = MultipleChoiceParser.parse_answer(result_entry["answer"])
-                                is_correct = MultipleChoiceParser.compare_answer(parsed_answer, correct_answer, base_result['question_text'])
-                                result_entry.update({
-                                    "parsed_answer": parsed_answer,
-                                    "is_correct": is_correct
-                                })
-                                report_properties.update({"parsed_number": report_properties["parsed_number"]+1})
-                    except Exception as e:
-                        result_entry.update({
-                            "fail_reason": e
-                        })
+                    report_properties.update({"successfully_parsed": report_properties["successfully_parsed"]+1})
                     success = True
+
+                except TypeError as e:
+                        result_entry.update({
+                            "fail_reason": str(e)
+                        })
+
                 except Exception as e:
                     last_error = str(e)
                     parse_attempts += 1
@@ -216,17 +219,13 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                             rate_limiter.wait_if_needed()
                     else:
                         result_entry.update({
-                            "fail_reason": f"Error occur when invoking agent: {e}"
+                            "fail_reason": f"Error occur when invoking agent: {str(e)}"
                         })
-            
-            # If we haven't successfully created a result entry, create one with error info
-            if not success:
-                result_entry = base_result.copy()
-                result_entry.update({
-                    'repeat_number': repeat,
-                    'answer': f"Error after {MAX_PARSE_ATTEMPTS} attempts: {last_error}",
-                    'confidence': None # Need to make this more flexible; 
-                })
+
+                finally:
+                    result_entry.update({
+                        'repeat_number': repeat,
+                    })
             
             if "is_correct" not in result_entry:
                 result_entry.update({"is_correct": None})
@@ -237,7 +236,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
             results_dict['results'].append(result_entry)
 
         # Save results after completing all repeats for the current question
-    print(f"\nSaving results after completing question {row_idx}")
+    print(f"\nSaving results after completing question {row_idx+1}")
     save_json(results_dict, llm_config)
     print(report_properties)
 
@@ -259,6 +258,8 @@ if __name__ == '__main__':
     # Add new dataset argument
     parser.add_argument('--dataset', default='GSM8K', 
                        help='Dataset name (default: GSM8K)')
+    parser.add_argument('--parser_type', default='confidence_parser', 
+                       help='Chose parser type from: \nbase_parser: [Answer]\nconfidence_parser: [Answer,Confidence]\ncot_parser: [Answer,Reasoning]\n(default: confidence_parser)')
     args = parser.parse_args()
     llm_config = get_llm_config(args)
     process_questions(llm_config, args.start_index)
