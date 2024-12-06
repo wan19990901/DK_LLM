@@ -1,6 +1,6 @@
 import re
 
-def parse_answer(answer):
+def parse_answer(answer, question_text):
     # Step 1: Strip the input string
     answer = answer.strip()
 
@@ -29,25 +29,14 @@ def parse_answer(answer):
     if choice:
         return choice
 
-    # Step 4: Return the original answer if no match is found
-    return answer
-
-def compare_answer(answer, correct_answer, question_text):
-    # Step 1: Normalize and directly compare if answer is a single letter A-I
-    answer = answer.strip()
-    if len(answer) == 1 and answer.lower() in "abcdefghi":
-        return answer.lower() == correct_answer.strip().lower()
-
-    # Step 2: Extract correct answer content from question_text
-    correct_answer = correct_answer.strip().upper()
-    patterns = [
-        rf'\n?{correct_answer}(?=\s|$)',          # Match "B" with optional \n in front
-        rf'\n?{correct_answer}\)',               # Match "B)" with optional \n in front
-        rf'\n?\({correct_answer}\)'              # Match "(B)" with optional \n in front
+    question_patterns = [
+        rf'\n?([A-I])(?=\s|$)',          # Match "B" with optional \n in front
+        rf'\n?([A-I])\)',               # Match "B)" with optional \n in front
+        rf'\n?\(([A-I])\)'              # Match "(B)" with optional \n in front
     ]
-    content_match = None
+    answer_contents = []
 
-    for pattern in patterns:
+    for pattern in question_patterns:
         match = re.search(pattern, question_text, re.IGNORECASE)
         if match:
             matched_text = match.group(0)
@@ -63,16 +52,19 @@ def compare_answer(answer, correct_answer, question_text):
             )
             end_idx = start_idx + (next_match.start() if next_match else len(question_text[start_idx:]))
 
-            correct_content = question_text[start_idx:end_idx].strip()
-            content_match = correct_content
+            answer_content = question_text[start_idx:end_idx].strip()
+            answer_contents.append(answer_content)
             break
 
-    # Step 3: If no correct content was extracted, return False
-    if not content_match:
-        return False
+    for ind in range(len(answer_contents)):
+        if answer.lower() in answer_contents[ind].lower():
+            return chr(ord('a')+ind).upper()
 
-    # Step 4: Check if correct_content exists in the answer, ignoring cases
-    if content_match.lower() in answer.lower():
-        return True
+    return answer
+
+def compare_answer(answer, correct_answer):
+    answer = answer.strip()
+    if len(answer) == 1 and answer.lower() in "abcdefghi":
+        return answer.lower() == correct_answer.strip().lower()
 
     return False

@@ -65,8 +65,6 @@ class LLM_agent:
         chain = self.chat_prompt | self.llm
         output = chain.invoke(arg_dict)
         output_text = extract_json(output.content)
-        print(0)
-        print(output_text)
         formatted_response = self.parser.invoke(output_text)
         return formatted_response
 
@@ -90,7 +88,3 @@ class LLM_agent:
         return self.chat_prompt
     def get_parser(self):
         return self.parser
-
-
-if __name__ == '__main__':
-    print(1)
