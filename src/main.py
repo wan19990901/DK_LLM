@@ -19,8 +19,8 @@ from QuestionType import QuestionType
 DATA_DIR = '../data/'
 
 # Experiment Config
-NUM_OF_SAMPLES = 50
-NUM_OF_REPEAT = 10
+NUM_OF_SAMPLES = 2000
+NUM_OF_REPEAT = 15
 
 def get_llm_config(args) -> Dict[str, Any]:
     """Get LLM configuration from arguments"""
@@ -29,7 +29,7 @@ def get_llm_config(args) -> Dict[str, Any]:
         'api_key_link': args.api_key_file,
         'model': args.model,
         'prompt_link': args.prompt_file,
-        'parser_template': Base_Parser,  # We need to make this more flexible
+        'parser_template': CoT_Parser,  # We need to make this more flexible
         'temperature': args.temperature,
         'dataset': args.dataset,  # Add dataset to config
     }
@@ -170,7 +170,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     result_entry.update({
                         'repeat_number': repeat,
                         'answer': response['Answer'],
-                        'confidence': response['Confidence'] # Change this later
+                        'reasoning': response['reasoning'] # Change this later
                     })
 
                     try:
@@ -203,7 +203,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                                 report_properties.update({"parsed_number": report_properties["parsed_number"]+1})
                     except Exception as e:
                         result_entry.update({
-                            "fail_reason": e
+                            "fail_reason": str(e)
                         })
                     success = True
                 except Exception as e:
@@ -216,7 +216,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                             rate_limiter.wait_if_needed()
                     else:
                         result_entry.update({
-                            "fail_reason": f"Error occur when invoking agent: {e}"
+                            "fail_reason": f"Error occur when invoking agent: {last_error}"
                         })
             
             # If we haven't successfully created a result entry, create one with error info
@@ -225,7 +225,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                 result_entry.update({
                     'repeat_number': repeat,
                     'answer': f"Error after {MAX_PARSE_ATTEMPTS} attempts: {last_error}",
-                    'confidence': None # Need to make this more flexible; 
+                    'reasoning': None # Need to make this more flexible; 
                 })
             
             if "is_correct" not in result_entry:
@@ -235,7 +235,9 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                 report_properties.update({"is_correct_count": report_properties["is_correct_count"]+1})
 
             results_dict['results'].append(result_entry)
-
+        print(results_dict)
+        print(llm_config)
+        save_json(results_dict, llm_config)
         # Save results after completing all repeats for the current question
     print(f"\nSaving results after completing question {row_idx}")
     save_json(results_dict, llm_config)
@@ -243,21 +245,21 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run GSM8K evaluation')
-    parser.add_argument('--llm_type', default='anthropic', 
+    parser.add_argument('--llm_type', default='lambda', 
                        choices=['openai', 'ollama', 'anthropic', 'gemini', 'azure', 'lambda'], 
                        help='LLM type')
-    parser.add_argument('--api_key_file', default='../Api_keys/claude_api.txt', 
+    parser.add_argument('--api_key_file', default='../Api_keys/lambda_api.txt', 
                        help='API key file')
-    parser.add_argument('--model', default='claude-3-5-haiku-20241022', 
+    parser.add_argument('--model', default='llama3.1-70b-instruct-berkeley', 
                        help='Model name')
-    parser.add_argument('--prompt_file', default='../prompts/base.json', 
+    parser.add_argument('--prompt_file', default='../prompts/CoT_raw.json', 
                        help='Prompt template file')
     parser.add_argument('--temperature', type=float, default=0.1, 
                        help='Temperature for LLM')
     parser.add_argument('--start_index', type=int, default=0, 
                        help='Starting index for processing')
     # Add new dataset argument
-    parser.add_argument('--dataset', default='GSM8K', 
+    parser.add_argument('--dataset', default='CoT_final', 
                        help='Dataset name (default: GSM8K)')
     args = parser.parse_args()
     llm_config = get_llm_config(args)

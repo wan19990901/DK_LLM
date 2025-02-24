@@ -1,4 +1,0 @@
-{
-    "system": "Read the question, analyze step by step, give your confidence in each step, and then derive your final answer and your confidence in this answer.",
-    "human": "{question}"
-}

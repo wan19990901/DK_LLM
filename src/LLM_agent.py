@@ -1,10 +1,11 @@
 from langchain_openai import ChatOpenAI
 from langchain.prompts.chat import ChatPromptTemplate
-from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import StructuredOutputParser
 import json
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import AIMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_xai import ChatXAI
 from langchain_openai import AzureChatOpenAI
 import re
 import os
@@ -15,7 +16,7 @@ from utils import *
 
 
 class LLM_agent:
-    def __init__(self,api_key = None, llm_type = 'openai',model="gpt-4o-mini",temperature=0.3):
+    def __init__(self,api_key = None, llm_type = 'openai',model="gpt-4o-mini",temperature=0.3,base_url='https://openrouter.ai/api/v1'):
         self.api_key = api_key
         self.llm_type = llm_type
         self.parser = None
@@ -39,12 +40,13 @@ class LLM_agent:
             os.environ["GOOGLE_API_KEY"] = self.api_key
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = '/home/guangya/.config/gcloud/application_default_credentials.json'
             self.llm = ChatGoogleGenerativeAI(model=model, temperature=temperature, gemini_api_key=self.api_key)
-        elif self.llm_type == 'lambda':
+        elif self.llm_type == 'xai':
+            self.llm = ChatXAI(model=model, temperature=temperature, xai_api_key=self.api_key)
+        elif self.llm_type == 'Other':
             self.llm = ChatOpenAI(
                 api_key=self.api_key,
-                base_url="https://api.lambdalabs.com/v1",  # Add this to your configuration
-                model= model
-            )
+                base_url=base_url,  # Add this to your configuration
+                model= model)
         elif llm_type == 'ollama':
             self.llm = ChatOllama(model=model, temperature=temperature)
         else:
@@ -65,8 +67,8 @@ class LLM_agent:
         chain = self.chat_prompt | self.llm
         output = chain.invoke(arg_dict)
         output_text = extract_json(output.content)
-        print(0)
-        print(output_text)
+        # print(0)
+        # print(output_text)
         formatted_response = self.parser.invoke(output_text)
         return formatted_response
 
@@ -82,7 +84,7 @@ class LLM_agent:
                 messages.append((key, val))
 
         # Set up the parser and prompt
-        self.parser = JsonOutputParser(pydantic_object=parser_obj)
+        self.parser = StructuredOutputParser(pydantic_object=parser_obj)
         self.num_of_llm_output = len(parser_obj.__fields__)
         self.chat_prompt = ChatPromptTemplate(messages,partial_variables = {"format_instructions": self.parser.get_format_instructions()})
 
@@ -90,7 +92,6 @@ class LLM_agent:
         return self.chat_prompt
     def get_parser(self):
         return self.parser
-
-
+    
 if __name__ == '__main__':
     print(1)

@@ -17,4 +17,4 @@ class Base_Parser(BaseModel):
 
 class CoT_Parser(BaseModel):
     Answer: str = Field(description="Just the answer only to the provided question without explanation")
-    Reasoning: str = Field(description="Provide your step-by-step reasoning here")
+    reasoning: str = Field(description="Provide your step-by-step reasoning here")
