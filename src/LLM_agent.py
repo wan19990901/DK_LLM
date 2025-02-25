@@ -66,11 +66,9 @@ class LLM_agent:
 
         chain = self.chat_prompt | self.llm
         output = chain.invoke(arg_dict)
-        output_text = extract_json(output.content)
-        # print(0)
-        # print(output_text)
-        formatted_response = self.parser.invoke(output_text)
-        return formatted_response
+        # output_text = extract_json(output.content)
+        # formatted_response = self.parser.invoke(output_text)
+        return output.content
 
     def setup_prompt(self, prompt_json_path: str, parser_obj: BaseModel) -> None:
         """Set up the prompt template and parser"""
@@ -84,8 +82,8 @@ class LLM_agent:
                 messages.append((key, val))
 
         # Set up the parser and prompt
-        self.parser = StructuredOutputParser(pydantic_object=parser_obj)
-        self.num_of_llm_output = len(parser_obj.__fields__)
+        # self.parser = StructuredOutputParser(pydantic_object=parser_obj)
+        # self.num_of_llm_output = len(parser_obj.__fields__)
         self.chat_prompt = ChatPromptTemplate(messages,partial_variables = {"format_instructions": self.parser.get_format_instructions()})
 
     def get_prompt(self):
