@@ -64,7 +64,6 @@ def extract_answer(completion):
 
 
 def delete_extra_zero(n):
-    '''删除小数点后多余的0'''
     try:
         n=float(n)
     except:
@@ -248,3 +247,140 @@ def calculate_SC_correctness(df):
     # Apply the helper function across the DataFrame rows
     df['SC_correctness'] = df.apply(lambda row: check_majority(row['CoT answers'], row['correct answer']), axis=1)
     return df
+
+def extract_option_logprobs(logprobs_dict):
+    """
+    Extracts the log probability of the chosen option token (A-H) following 
+    the 'answer' token in a logprobs dictionary.
+
+    Args:
+        logprobs_dict (str | dict): A string representation or dictionary 
+                                    containing logprobs information. Expected 
+                                    structure includes a 'content' list with 
+                                    token dictionaries, each having 'token' 
+                                    and 'logprob'.
+
+    Returns:
+        float: The log probability of the first option token found after 
+               'answer', or -1 if not found or an error occurs.
+    """
+    try:
+        # Evaluate if it's a string representation
+        if isinstance(logprobs_dict, str):
+            try:
+                # Basic safety check before eval
+                if '{' not in logprobs_dict or '}' not in logprobs_dict:
+                     print(f"Warning: eval may fail on non-dict string: {logprobs_dict[:100]}")
+                logprobs_dict = eval(logprobs_dict)
+            except Exception as e:
+                print(f"Error evaluating logprobs string: {str(e)}")
+                return -1
+                
+        if not isinstance(logprobs_dict, dict) or 'content' not in logprobs_dict:
+             print(f"Invalid logprobs format: {logprobs_dict}")
+             return -1
+             
+        tokens = logprobs_dict.get('content', []) # Use .get for safety
+        if not isinstance(tokens, list):
+            print("Invalid 'content' format, not a list.")
+            return -1
+
+        final_idx = None
+        for i, token_info in enumerate(tokens):
+            if not isinstance(token_info, dict):
+                # print(f"Skipping invalid token_info (not a dict): {token_info}")
+                continue # Skip non-dict items
+            # Handle potential variations like ' answer' or ':answer'
+            # Use .get with default empty string for safety
+            if 'answer' in token_info.get('token', '').strip().lower():
+                final_idx = i
+                break
+                
+        if final_idx is None:
+            # print("Could not find 'answer' token.")
+            return -1
+            
+        # Look for option token in the next few tokens (increased range slightly)
+        for i in range(final_idx + 1, min(final_idx + 6, len(tokens))):
+            if i >= len(tokens) or not isinstance(tokens[i], dict):
+                 continue # Boundary and type check
+            token = tokens[i].get('token', '').strip()
+            # Check if token matches pattern '[A-H]'
+            if len(token) == 1 and token[0] in 'ABCDEFGH':
+                return tokens[i].get('logprob', -1) # Return logprob or -1 if missing
+                    
+        # print(f"Option token not found near 'answer'.") # Simplified debug message
+        return -1
+    except Exception as e:
+        # Catch broader exceptions during processing
+        print(f"General error processing logprobs: {str(e)}")
+        return -1
+
+def extract_complete_answer(question_text, correct_answer_letter):
+    """
+    Extracts the full text of the correct answer option from the question text.
+    Handles multiple-choice questions with options potentially separated by 
+    newlines or commas, prefixed with letters (A, B, C, etc.). Also handles
+    simple Yes/No answers directly.
+
+    Args:
+        question_text (str): The full text of the question including options.
+        correct_answer_letter (str): The letter (or Yes/No) corresponding to the 
+                                     correct answer.
+
+    Returns:
+        str: The full text of the correct option, or the original 
+             correct_answer_letter if extraction fails or it's Yes/No.
+    """
+    # Ensure inputs are strings
+    question_text = str(question_text) if question_text is not None else ""
+    correct_answer_letter = str(correct_answer_letter).strip() if correct_answer_letter is not None else ""
+    
+    if not correct_answer_letter:
+        return "" # Return empty if correct answer is missing
+        
+    # Handle Yes/No answers directly
+    if correct_answer_letter.lower() in ['yes', 'no']:
+        # Return with consistent casing maybe?
+        return correct_answer_letter.capitalize()
+    
+    # Pattern to find options like A), A ), A. B), B ), B. etc.
+    # Looks for the correct letter (case-insensitive), optional space, delimiter [.)], optional space,
+    # captures the text until the next option pattern (letter[.)]) or end of string.
+    pattern = re.compile(
+        rf"^\s*(?:{re.escape(correct_answer_letter)})\s*[.)]\s*(.*?)(?=\n\s*[A-Z]\s*[.)]|\Z)", 
+        re.MULTILINE | re.DOTALL | re.IGNORECASE
+    )
+    
+    match = pattern.search(question_text)
+    
+    if match:
+        # Return the captured group (the option text), stripped
+        return match.group(1).strip()
+    else:
+        # Fallback: try finding based on simple newline splitting if pattern fails
+        # Handle both \n and actual newlines
+        lines = question_text.replace('\\n', '\n').split('\n')
+        for line in lines:
+             line_strip = line.strip()
+             # Check startswith ignoring case and with flexible delimiters
+             if re.match(rf"^\s*{re.escape(correct_answer_letter)}\s*[.)]", line_strip, re.IGNORECASE):
+                 # Extract text after the marker (e.g., "A) ", "B. ")
+                 option_text = re.sub(rf"^\s*{re.escape(correct_answer_letter)}\s*[.)]\s*", "", line_strip, flags=re.IGNORECASE)
+                 return option_text.strip()
+
+        # If no match found after trying patterns and lines, return the original letter
+        # print(f"Warning: Could not extract complete answer for '{correct_answer_letter}' from question.")
+        return correct_answer_letter # Return original letter as fallback
+
+# Example Usage (can be removed or kept for testing):
+# question_example = '''What is the capital of France?
+# A) London
+# B ) Paris
+# C. Berlin
+# D) Madrid'''
+# print(f"Extracted for B: {extract_complete_answer(question_example, 'B')}")
+# print(f"Extracted for C: {extract_complete_answer(question_example, 'C')}")
+
+# question_example_yesno = "Is the sky blue?"
+# print(f"Extracted for Yes: {extract_complete_answer(question_example_yesno, 'Yes')}")

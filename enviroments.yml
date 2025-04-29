@@ -1,23 +1,24 @@
-name: langchain_env
+name: llm_calibration
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.12.2
+  - python=3.9
   - pip
-  - numpy
   - pandas
-  - scikit-learn
+  - numpy
+  - matplotlib
+  - seaborn
   - jupyter
-  - transformers
-
+  - scikit-learn
   - pip:
-    - tqdm
+    - openai
+    - anthropic
+    - google-generativeai
+    - groq
+    - python-dotenv
+    - langchain
+    - langchain-google-genai
+    - langchain-core
     - langchain-openai
     - langchain-anthropic
-    - langchain-google-genai
-    - langchain-community
-    - pydantic
-    - python-dotenv
-    - matplotlib
-    - seaborn

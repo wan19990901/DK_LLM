@@ -13,6 +13,13 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 from langchain_community.chat_models import ChatOllama
 from Parsers import *
 from utils import *
+import argparse
+import pandas as pd
+from dotenv import load_dotenv
+import openai
+from anthropic import Anthropic
+from google.generativeai import GenerativeModel
+import groq
 
 
 class LLM_agent:
@@ -66,8 +73,6 @@ class LLM_agent:
 
         chain = self.chat_prompt | self.llm
         output = chain.invoke(arg_dict)
-        # output_text = extract_json(output.content)
-        # formatted_response = self.parser.invoke(output_text)
         return output.content
 
     def setup_prompt(self, prompt_json_path: str, parser_obj: BaseModel) -> None:
@@ -80,16 +85,109 @@ class LLM_agent:
                 if key == 'system' and self.llm_type != 'ollama':
                     val += '\n{format_instructions}'
                 messages.append((key, val))
-
-        # Set up the parser and prompt
-        # self.parser = StructuredOutputParser(pydantic_object=parser_obj)
-        # self.num_of_llm_output = len(parser_obj.__fields__)
-        self.chat_prompt = ChatPromptTemplate(messages,partial_variables = {"format_instructions": self.parser.get_format_instructions()})
+        self.chat_prompt = ChatPromptTemplate(messages)
 
     def get_prompt(self):
         return self.chat_prompt
     def get_parser(self):
         return self.parser
     
+    def generate_response(self, prompt: str, temperature: float = 0.7) -> str:
+        """Generate a response using the specified model."""
+        if self.llm_type.startswith('gpt'):
+            response = self.llm.invoke({"prompt": prompt})
+            return response
+        elif self.llm_type.startswith('claude'):
+            response = self.llm.invoke({"prompt": prompt})
+            return response
+        elif self.llm_type.startswith('gemini'):
+            response = self.llm.invoke({"prompt": prompt})
+            return response
+        elif self.llm_type.startswith('grok'):
+            response = self.llm.invoke({"prompt": prompt})
+            return response
+        else:
+            raise ValueError(f"Unsupported model: {self.llm_type}")
+
+    def batch_process(self, prompts: List[str], temperature: float = 0.7) -> List[str]:
+        """Process multiple prompts in batch."""
+        return [self.generate_response(prompt, temperature) for prompt in prompts]
+
+def load_api_keys() -> Dict[str, str]:
+    """Load multiple LLM API keys from .env file."""
+    load_dotenv()
+    required_keys = [
+        "OPENAI_API_KEY",
+        "OPENAI_API_KEY_rise",
+        "OPENAI_API_KEY_yuqi",
+        "OPENAI_API_KEY_deepinfra",
+        "OPENAI_API_KEY_OR",
+        "AZURE_OPENAI_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "GOOGLE_GEMINI_KEY",
+        "Grok_API_KEY"
+    ]
+    api_keys = {key: os.getenv(key) for key in required_keys}
+    missing_keys = [key for key, value in api_keys.items() if not value]
+    if missing_keys:
+        raise ValueError(f"Missing required API keys: {', '.join(missing_keys)}")
+    return api_keys
+
+def load_prompt_template(template_path: str) -> Dict:
+    """Load a prompt template from a JSON file."""
+    with open(template_path, 'r') as f:
+        return json.load(f)
+
+def main():
+    parser = argparse.ArgumentParser(description='Generate CoT and confidence responses using LLMs.')
+    parser.add_argument('--data', type=str, default='data/final_df_sample.csv', help='Path to the input CSV file')
+    parser.add_argument('--prompt', type=str, default='prompts/CoT_raw.json', help='Path to the prompt template JSON file')
+    parser.add_argument('--model', type=str, default='gpt-4', help='LLM model to use')
+    parser.add_argument('--output', type=str, default='results.csv', help='Path to save the output CSV file')
+    parser.add_argument('--temperature', type=float, default=0.7, help='Temperature for response generation')
+    args = parser.parse_args()
+
+    # Load API keys
+    api_keys = load_api_keys()
+    
+    # Select the appropriate API key based on the model
+    if args.model.startswith('gpt'):
+        api_key = api_keys['OPENAI_API_KEY']
+    elif args.model.startswith('claude'):
+        api_key = api_keys['ANTHROPIC_API_KEY']
+    elif args.model.startswith('gemini'):
+        api_key = api_keys['GOOGLE_GEMINI_KEY']
+    elif args.model.startswith('grok'):
+        api_key = api_keys['Grok_API_KEY']
+    else:
+        raise ValueError(f"Unsupported model: {args.model}")
+
+    # Initialize LLM agent
+    agent = LLM_agent(api_key=api_key, llm_type=args.model)
+
+    # Load data
+    df = pd.read_csv(args.data)
+
+    # Load prompt template
+    prompt_template = load_prompt_template(args.prompt)
+
+    # Generate responses
+    results = []
+    for idx, row in df.iterrows():
+        question = row['Question']
+        prompt = prompt_template['template'].format(question=question)
+        response = agent.generate_response(prompt, args.temperature)
+        results.append({
+            'Question': question,
+            'Response': response,
+            'Model': args.model,
+            'Temperature': args.temperature
+        })
+
+    # Save results
+    results_df = pd.DataFrame(results)
+    results_df.to_csv(args.output, index=False)
+    print(f"Results saved to {args.output}")
+
 if __name__ == '__main__':
-    print(1)
+    main()

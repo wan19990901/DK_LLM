@@ -29,8 +29,8 @@ def get_llm_config(args) -> Dict[str, Any]:
         'api_key_link': args.api_key_file,
         'model': args.model,
         'prompt_link': args.prompt_file,
-        'parser_template': CoT_Parser,  # We need to make this more flexible
         'temperature': args.temperature,
+        'start_index': args.start_index,
         'dataset': args.dataset,  # Add dataset to config
     }
 
@@ -42,7 +42,7 @@ def save_json(results: Dict[str, Any], llm_config: Dict[str, Any]) -> None:
     
     # Create filename using model, dataset name, and prompt file name
     prompt_name = os.path.splitext(os.path.basename(llm_config['prompt_link']))[0]  # Get prompt name without extension
-    file_name = f'{llm_config["dataset"]}_{prompt_name}.json'
+    file_name = f'{llm_config["dataset"]}_{prompt_name}_{llm_config["start_index"]}.json'
     file_path = os.path.join(storage_dir, file_name)
     
     # Add metadata
@@ -57,39 +57,10 @@ def save_json(results: Dict[str, Any], llm_config: Dict[str, Any]) -> None:
         json.dump(results, f, indent=2)
 
 
-
-class RateLimiter:
-    def __init__(self, max_requests, time_window):
-        self.max_requests = max_requests
-        self.time_window = time_window  # in seconds
-        self.requests = deque()
-
-    def wait_if_needed(self):
-        now = datetime.now()
-        
-        # Remove requests older than the time window
-        while self.requests and (now - self.requests[0]) > timedelta(seconds=self.time_window):
-            self.requests.popleft()
-        
-        # If we've hit the rate limit, wait until we can make another request
-        if len(self.requests) >= self.max_requests:
-            wait_time = (self.requests[0] + timedelta(seconds=self.time_window) - now).total_seconds()
-            if wait_time > 0:
-                print(f"\nRate limit reached. Waiting {wait_time:.2f} seconds...")
-                time.sleep(wait_time)
-                # Clean up old requests again after waiting
-                while self.requests and (datetime.now() - self.requests[0]) > timedelta(seconds=self.time_window):
-                    self.requests.popleft()
-        
-        # Add the new request
-        self.requests.append(now)
-
 def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
     """Process questions and collect results"""
     MAX_PARSE_ATTEMPTS = 3  # Maximum number of attempts for parsing errors
     
-    # Initialize rate limiter for Gemini
-    rate_limiter = RateLimiter(max_requests=15, time_window=61) if llm_config['llm_type'] == 'gemini' else None
     
     with open(llm_config['api_key_link'], 'r') as f:
         api_key = f.read().strip()
@@ -152,10 +123,7 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                 break
 
             arguments_dict = {'question': row['Question']}
-            
-            # Apply rate limiting if using Gemini
-            if rate_limiter:
-                rate_limiter.wait_if_needed()
+        
             
             # Try multiple times for each repeat
             success = False
@@ -211,9 +179,6 @@ def process_questions(llm_config: Dict[str, Any], start_index: int = 0) -> None:
                     parse_attempts += 1
                     if parse_attempts < MAX_PARSE_ATTEMPTS:
                         print(f"Attempt {parse_attempts} failed: {last_error}, retrying...")
-                        # Apply rate limiting for retries as well if using Gemini
-                        if rate_limiter:
-                            rate_limiter.wait_if_needed()
                     else:
                         result_entry.update({
                             "fail_reason": f"Error occur when invoking agent: {last_error}"
