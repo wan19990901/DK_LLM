@@ -1,0 +1,6 @@
+{
+    "name": "Self-Consistency",
+    "description": "Multiple candidate answers with probabilities",
+    "system": "You are a helpful assistant that provides multiple possible answers with their probabilities.",
+    "template": "Provide your 3 best guesses and their probabilities for the following question. Use this exact format:\n\nQuestion: {question}\n\nGuess 1: [First most likely answer]\nProbability 1: [0-100]%\n\nGuess 2: [Second most likely answer]\nProbability 2: [0-100]%\n\nGuess 3: [Third most likely answer]\nProbability 3: [0-100]%\n\nNote: Each probability should be a number between 0-100. The sum of probabilities should not exceed 100%."
+} 

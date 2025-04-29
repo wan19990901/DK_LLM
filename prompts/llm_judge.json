@@ -1,0 +1,6 @@
+{
+    "name": "LLM as Judge",
+    "description": "Evaluation prompt for comparing model answers with reference answers",
+    "system": "You are an expert evaluator that determines if answers are semantically equivalent, even if expressed differently.",
+    "template": "Evaluate if the model's answer is semantically equivalent to the reference answer. Use this exact format:\n\nQuestion: {question}\n\nReference Answer: {reference_answer}\nModel Answer: {model_answer}\n\nEvaluation:\n1. Semantic Equivalence: [CORRECT/INCORRECT]\n2. Explanation: [Brief explanation of why the answers are or are not equivalent]\n\nNote: Consider semantic equivalence, not just exact wording. Allow for different but valid ways of expressing the same answer."
+} 

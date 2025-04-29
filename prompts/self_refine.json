@@ -1,0 +1,6 @@
+{
+    "name": "Self-Refine",
+    "description": "Chain-of-Thought with explicit reevaluation phase",
+    "system": "You are a careful assistant that critically evaluates your own reasoning.",
+    "template": "Analyze the following question in two phases. Use this exact format:\n\nQuestion: {question}\n\nPhase 1 - Initial Analysis:\nStep 1: [First step of analysis]\nStep 2: [Second step of analysis]\n...\nInitial Answer: [Your initial answer]\n\nPhase 2 - Critical Review:\nPotential Error 1: [First potential error or gap]\nPotential Error 2: [Second potential error or gap]\n...\n\nFinal Answer: [Your revised answer after review]\nConfidence: [0-100]%"
+} 

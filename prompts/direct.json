@@ -1,0 +1,6 @@
+{
+    "name": "Direct Question",
+    "description": "Direct question with confidence estimation",
+    "system": "You are a helpful assistant that provides direct answers with confidence estimates.",
+    "template": "Answer the following question and state your confidence (0-100%). Use the following format:\n\nAnswer: [your answer]\nConfidence: [0-100]%\n\nQuestion: {question}"
+} 

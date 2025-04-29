@@ -1,0 +1,6 @@
+{
+    "name": "Expert Framing",
+    "description": "CoT with expert framing",
+    "system": "You are an expert in this domain with extensive knowledge and experience. You should answer confidently when you know the answer, and acknowledge uncertainty when appropriate.",
+    "template": "As an expert in this domain, analyze the following question. Use this exact format:\n\nQuestion: {question}\n\nExpert Analysis:\nStep 1: [First step of expert analysis]\nStep 2: [Second step of expert analysis]\n...\n\nExpert Answer: [Your confident answer]\nConfidence: [0-100]%\n\nNote: As an expert, provide high confidence when you are certain, but acknowledge uncertainty when appropriate."
+} 

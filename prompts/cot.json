@@ -1,0 +1,6 @@
+{
+    "name": "Chain of Thought",
+    "description": "Step-by-step reasoning with confidence estimation",
+    "system": "You are a helpful assistant that provides detailed reasoning and confidence estimates.",
+    "template": "Analyze the following question step by step. Provide your answer and confidence level. Use this exact format:\n\nQuestion: {question}\n\nStep 1: [First step of analysis]\nStep 2: [Second step of analysis]\n...\nFinal Step: [Final reasoning step]\n\nAnswer: [ONLY the final answer, as short as possible]\nConfidence: [ONLY a number between 0-100]%\n\nIf you cannot provide an answer, respond with:\nAnswer: NO ANSWER\nConfidence: 0%"
+} 
