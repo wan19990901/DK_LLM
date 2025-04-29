@@ -34,11 +34,6 @@ DK_LLM/
 2. Create a `.env` file in the project root with your API keys:
    ```
    OPENAI_API_KEY=your_key
-   OPENAI_API_KEY_rise=your_key
-   OPENAI_API_KEY_yuqi=your_key
-   OPENAI_API_KEY_deepinfra=your_key
-   OPENAI_API_KEY_OR=your_key
-   AZURE_OPENAI_API_KEY=your_key
    ANTHROPIC_API_KEY=your_key
    GOOGLE_GEMINI_KEY=your_key
    Grok_API_KEY=your_key

@@ -118,11 +118,6 @@ def load_api_keys() -> Dict[str, str]:
     load_dotenv()
     required_keys = [
         "OPENAI_API_KEY",
-        "OPENAI_API_KEY_rise",
-        "OPENAI_API_KEY_yuqi",
-        "OPENAI_API_KEY_deepinfra",
-        "OPENAI_API_KEY_OR",
-        "AZURE_OPENAI_API_KEY",
         "ANTHROPIC_API_KEY",
         "GOOGLE_GEMINI_KEY",
         "Grok_API_KEY"
